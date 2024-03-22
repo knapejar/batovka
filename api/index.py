@@ -86,11 +86,20 @@ CORS(app)
 
 
 deployDateTime = datetime.now()
+ipsVisited = set()
+ipDetails = {}
 @app.route('/')
 def home():
     amountOfRequests = app.config.get('AMOUNT_OF_REQUESTS', 0)
     app.config['AMOUNT_OF_REQUESTS'] = amountOfRequests + 1
-    return 'Batovka#0.1' + '<br>' + deployDateTime.strftime('%Y-%m-%d %H:%M:%S') + '<br>' + str((datetime.now()-deployDateTime)) + '<br>' + str(amountOfRequests)
+    ipsVisited.add(request.remote_addr)
+    ipDetails[request.remote_addr] = str(request.headers.get('User-Agent'))
+    ipsVisitedStr = ''
+    for ip in ipsVisited: ipsVisitedStr += ip + ' | ' + ipDetails[ip] + '<br>'
+    return 'Batovka#0.1' + '<br>' + deployDateTime.strftime('%Y-%m-%d %H:%M:%S') + '<br>' + str((datetime.now()-deployDateTime)) + '<br>' + str(amountOfRequests) + '<br>' + ipsVisitedStr
+
+@app.route('/favicon.ico')
+def favicon(): return app.send_static_file('icon.png')
 
 @app.route('/resetTheDb')
 def resetDb():
