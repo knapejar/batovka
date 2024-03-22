@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify, request, redirect, url_for, session, copy_current_request_context
 from flask_jwt_extended import create_access_token, verify_jwt_in_request, JWTManager
-import json, os, git
+import json, os
 from flask_jwt_extended import create_access_token, verify_jwt_in_request, JWTManager, get_jwt_identity
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
@@ -85,15 +85,12 @@ jwt = JWTManager(app)
 CORS(app)
 
 
-repo = git.Repo(search_parent_directories=True)
-sha = repo.head.object.hexsha
-shaStart = sha[:6]
 deployDateTime = datetime.now()
 @app.route('/')
 def home():
     amountOfRequests = app.config.get('AMOUNT_OF_REQUESTS', 0)
     app.config['AMOUNT_OF_REQUESTS'] = amountOfRequests + 1
-    return 'Batovka#' + shaStart + '<br>' + deployDateTime.strftime('%Y-%m-%d %H:%M:%S') + '<br>' + str((datetime.now()-deployDateTime)) + '<br>' + str(amountOfRequests)
+    return 'Batovka#0.1' + '<br>' + deployDateTime.strftime('%Y-%m-%d %H:%M:%S') + '<br>' + str((datetime.now()-deployDateTime)) + '<br>' + str(amountOfRequests)
 
 @app.route('/resetTheDb')
 def resetDb():
